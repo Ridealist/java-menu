@@ -9,7 +9,7 @@ public class MenuRecommend {
 
     private final CategoryRecommend categoryRecommend;
     private final Coach coach;
-    private Food food;
+    private final Food food;
 
     public MenuRecommend(CategoryRecommend categoryRecommend, Coach coach) {
         this.categoryRecommend = categoryRecommend;
@@ -21,14 +21,14 @@ public class MenuRecommend {
         List<String> menus = FoodRepository.getAllFoodsByCategory(category);
         String menu = Randoms.shuffle(menus).get(0);
         Food food = FoodRepository.getByName(menu);
-        if (!validateMenu(food)) {
-            getRandomMenu(category);
+        if (validateMenu(food)) {
+            return food;
         }
-        return food;
+        return getRandomMenu(category);
     }
 
     private boolean validateMenu(Food food) {
-        return validateUniqueMenu(food) || validateNotContainsCannotEatMenus(food);
+        return validateUniqueMenu(food) && validateNotContainsCannotEatMenus(food);
     }
 
     private boolean validateUniqueMenu(Food food) {
