@@ -20,6 +20,9 @@ public class Coach {
     }
 
     public void updateFoods(List<String> foods) {
+        if (foods.size() == 1 && foods.get(0).equals("")) {
+            return;
+        }
         for (String name : foods) {
             cannotEatFoods.add(FoodRepository.getByName(name));
         }
