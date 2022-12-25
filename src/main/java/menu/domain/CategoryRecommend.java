@@ -16,7 +16,7 @@ public class CategoryRecommend {
     public Category getRandomCategory() {
         Category category = Category.getByNumber(Randoms.pickNumberInRange(1, 5));
         if (CategoryRecommendRepository.hasOverDuplicatedCategory(category)) {
-            return getCategory();
+            return getRandomCategory();
         }
         return category;
     }
