@@ -47,7 +47,7 @@ public class MenuController {
             List<String> menus = InputVIew.readCannotEatMenus(coach);
             coach.updateFoods(menus);
         } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
+            OutputView.printError(e.getMessage());
             setMenusOnCoach(coach);
         }
     }
