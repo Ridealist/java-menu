@@ -32,10 +32,8 @@ public class Coach {
         }
     }
 
-    public void setThisWeeksMenus(List<Category> thisWeekCategories) {
-        for (Category category : thisWeekCategories) {
-            thisWeekMenus.add(getRandomMenu(category));
-        }
+    public void setThisWeeksMenus(Category category) {
+        thisWeekMenus.add(getRandomMenu(category));
     }
 
     public List<Food> getThisWeekMenus() {

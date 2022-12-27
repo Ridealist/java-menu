@@ -56,9 +56,10 @@ public class MenuController {
 
     private static void makeRecommend() {
         Recommend recommend = new Recommend();
-        List<Category> thisWeekCategories = recommend.getWeekCategories();
-        for (Coach coach : CoachRepository.getCoaches()) {
-            coach.setThisWeeksMenus(thisWeekCategories);
+        for (Category category : recommend.getWeekCategories()) {
+            for (Coach coach : CoachRepository.getCoaches()) {
+                coach.setThisWeeksMenus(category);
+            }
         }
         OutputView.printResult(recommend);
 
