@@ -1,7 +1,9 @@
 package menu.domain;
 
+import camp.nextstep.edu.missionutils.Randoms;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import menu.repository.FoodRepository;
 
@@ -13,6 +15,8 @@ public class Coach {
 
     private final String name;
     private final List<Food> cannotEatFoods = new ArrayList<>();
+
+    private final List<Food> thisWeekMenus = new LinkedList<>();
 
     public Coach(String name) throws IllegalArgumentException {
         validateNameLength(name);
@@ -26,6 +30,38 @@ public class Coach {
         for (String name : foods) {
             cannotEatFoods.add(FoodRepository.getByName(name));
         }
+    }
+
+    public void setThisWeeksMenus(List<Category> thisWeekCategories) {
+        for (Category category : thisWeekCategories) {
+            thisWeekMenus.add(getRandomMenu(category));
+        }
+    }
+
+    public List<Food> getThisWeekMenus() {
+        return Collections.unmodifiableList(thisWeekMenus);
+    }
+
+    private Food getRandomMenu(Category category) {
+        List<String> menus = FoodRepository.getAllFoodsByCategory(category);
+        String menu = Randoms.shuffle(menus).get(0);
+        Food food = FoodRepository.getByName(menu);
+        if (validateMenu(food)) {
+            return food;
+        }
+        return getRandomMenu(category);
+    }
+
+    private boolean validateMenu(Food food) {
+        return validateUniqueMenu(food) && validateNotContainsCannotEatMenus(food);
+    }
+
+    private boolean validateUniqueMenu(Food food) {
+        return !thisWeekMenus.contains(food);
+    }
+
+    private boolean validateNotContainsCannotEatMenus(Food food) {
+        return !cannotEatFoods.contains(food);
     }
 
     private void validateNameLength(String name) {
