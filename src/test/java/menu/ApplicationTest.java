@@ -8,6 +8,7 @@ import static org.mockito.Mockito.mockStatic;
 
 import camp.nextstep.edu.missionutils.Randoms;
 import camp.nextstep.edu.missionutils.test.NsTest;
+import static camp.nextstep.edu.missionutils.test.Assertions.assertSimpleTest;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.mockito.MockedStatic;
 public class ApplicationTest extends NsTest {
 
     private static final Duration RANDOM_TEST_TIMEOUT = Duration.ofSeconds(10L);
+    private static final String ERROR_MESSAGE = "[ERROR]";
 
     @DisplayName("전체 기능 테스트")
     @Nested
@@ -70,6 +72,61 @@ public class ApplicationTest extends NsTest {
                     )
                 );
             });
+        }
+    }
+
+    @DisplayName("예외 테스트")
+    @Nested
+    class ExceptionTest {
+
+        @Test
+        void 코치_숫자_초과_예외_테스트() {
+            assertSimpleTest(
+                    () -> {
+                        runException("구구, 제임스, 포비, 크롱, 나나, 뽀");
+                        assertThat(output().contains(ERROR_MESSAGE));
+                    }
+            );
+        }
+
+        @Test
+        void 코치_숫자_미만_예외_테스트() {
+            assertSimpleTest(
+                    () -> {
+                        runException("구구");
+                        assertThat(output().contains(ERROR_MESSAGE));
+                    }
+            );
+        }
+
+        @Test
+        void 코치_이름_예외_테스트() {
+            assertSimpleTest(
+                    () -> {
+                        runException("구구단을외자, 포비");
+                        assertThat(output().contains(ERROR_MESSAGE));
+                    }
+            );
+        }
+
+        @Test
+        void 못먹는_메뉴_없는_경우_예외_테스트() {
+            assertSimpleTest(
+                    () -> {
+                        runException("구구, 포비", "한우 오마카세");
+                        assertThat(output().contains(ERROR_MESSAGE));
+                    }
+            );
+        }
+
+        @Test
+        void 못먹는_메뉴_갯수_초과_예외_테스트() {
+            assertSimpleTest(
+                    () -> {
+                        runException("구구, 포비", "쌀국수, 김치찌개, 된장찌개");
+                        assertThat(output().contains(ERROR_MESSAGE));
+                    }
+            );
         }
     }
 
