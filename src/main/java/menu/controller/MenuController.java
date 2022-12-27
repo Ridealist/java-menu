@@ -1,9 +1,11 @@
 package menu.controller;
 
 import java.util.List;
+import menu.domain.Category;
 import menu.domain.CategoryRecommend;
 import menu.domain.Coach;
 import menu.domain.MenuRecommend;
+import menu.domain.Recommend;
 import menu.domain.Weekday;
 import menu.repository.CategoryRecommendRepository;
 import menu.repository.CoachRepository;
@@ -20,7 +22,7 @@ public class MenuController {
         setCoaches();
         setCannotEatMenus();
         makeRecommend();
-        OutputView.printResult();
+        // OutputView.printResult();
         OutputView.printOutro();
     }
 
@@ -53,13 +55,20 @@ public class MenuController {
     }
 
     private static void makeRecommend() {
-        for (Weekday weekday : Weekday.getOrderedWeekdays()) {
-            CategoryRecommend categoryRecommend = new CategoryRecommend(weekday);
-            CategoryRecommendRepository.addRecommend(categoryRecommend);
-            for (Coach coach : CoachRepository.getCoaches()) {
-                MenuRecommend menuRecommend = new MenuRecommend(categoryRecommend, coach);
-                MenuRecommendRepository.addRecommend(menuRecommend);
-            }
+        Recommend recommend = new Recommend();
+        List<Category> thisWeekCategories = recommend.getWeekCategories();
+        for (Coach coach : CoachRepository.getCoaches()) {
+            coach.setThisWeeksMenus(thisWeekCategories);
         }
+        OutputView.printResult(recommend);
+
+//        for (Weekday weekday : Weekday.getOrderedWeekdays()) {
+//            CategoryRecommend categoryRecommend = new CategoryRecommend(weekday);
+//            CategoryRecommendRepository.addRecommend(categoryRecommend);
+//            for (Coach coach : CoachRepository.getCoaches()) {
+//                MenuRecommend menuRecommend = new MenuRecommend(categoryRecommend, coach);
+//                MenuRecommendRepository.addRecommend(menuRecommend);
+//            }
+//        }
     }
 }
