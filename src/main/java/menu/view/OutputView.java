@@ -1,7 +1,11 @@
 package menu.view;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import menu.domain.Category;
 import menu.domain.Coach;
+import menu.domain.Food;
+import menu.domain.Recommend;
 import menu.domain.Weekday;
 import menu.dto.RecommendDTO;
 
@@ -32,10 +36,10 @@ public class OutputView {
         System.out.println();
     }
 
-    public static void printResult() {
+    public static void printResult(Recommend recommend) {
         System.out.println(Message.RECOMMEND_RESULT.explanation);
         breakOneLineAfterPrint(makeWeekdayStatement());
-        breakOneLineAfterPrint(makeCategoryStatement());
+        breakOneLineAfterPrint(makeCategoryStatement(recommend));
         for (Coach coach : RecommendDTO.getCoaches()) {
             breakOneLineAfterPrint(makeCoachStatement(coach));
         }
@@ -51,13 +55,18 @@ public class OutputView {
         return str.substring(0, str.length() - 3);
     }
 
-    private static String makeCategoryStatement() {
+    private static String makeCategoryStatement(Recommend recommend) {
         StringBuilder str = new StringBuilder();
         str.append(Category.getClassName()).append(SEPARATOR);
-        for (Weekday weekday : Weekday.getOrderedWeekdays()) {
-            str.append(RecommendDTO.getCategoryNames(weekday)).append(SEPARATOR);
-        }
-        return str.substring(0, str.length() - 3);
+        List<Category> categories = recommend.getWeekCategories();
+        String weeksCategories = categories.stream().map(Category::getName).collect(Collectors.joining(SEPARATOR));
+        return str.append(weeksCategories).toString();
+//        StringBuilder str = new StringBuilder();
+//        str.append(Category.getClassName()).append(SEPARATOR);
+//        for (Weekday weekday : Weekday.getOrderedWeekdays()) {
+//            str.append(RecommendDTO.getCategoryNames(weekday)).append(SEPARATOR);
+//        }
+//        return str.substring(0, str.length() - 3);
     }
 
     private static String makeCoachStatement(Coach coach) {
@@ -69,12 +78,14 @@ public class OutputView {
     }
 
     private static String makeRecommendStatement(Coach coach) {
-        StringBuilder str = new StringBuilder();
-        for (String foodName : RecommendDTO.getRecommendMenusOnCoach(coach)) {
-            str.append(foodName);
-            str.append(SEPARATOR);
-        }
-        return str.substring(0, str.length() - 3);
+        List<Food> foods = coach.getThisWeekMenus();
+        return foods.stream().map(Food::getName).collect(Collectors.joining(SEPARATOR));
+//        StringBuilder str = new StringBuilder();
+//        for (String foodName : RecommendDTO.getRecommendMenusOnCoach(coach)) {
+//            str.append(foodName);
+//            str.append(SEPARATOR);
+//        }
+//        return str.substring(0, str.length() - 3);
     }
 
     private static void breakOneLineAfterPrint(String statement) {
